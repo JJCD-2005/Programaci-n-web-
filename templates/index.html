@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Gestor de Eventos</title>
+</head>
+<body>
+    <h1>Próximos Eventos</h1>
+    
+    {% if events %}
+        <ul>
+        {% for event in events %}
+            <li>
+                <h2><a href="#">{{ event.title }}</a></h2>
+                <p>Fecha: {{ event.date }}</p>
+                <p>Ubicación: {{ event.location }}</p>
+                <p>Categoría: {{ event.category }}</p>
+            </li>
+        {% endfor %}
+        </ul>
+    {% else %}
+        <p>No hay eventos próximos.</p>
+    {% endif %}
+</body>
+</html>
