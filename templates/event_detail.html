@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>{{ event.title }}</title>
+</head>
+<body>
+    <a href="/">Volver a la lista de eventos</a>
+    <h1>{{ event.title }}</h1>
+    <p><strong>Descripción:</strong> {{ event.description }}</p>
+    <p><strong>Fecha:</strong> {{ event.date }}</p>
+    <p><strong>Hora:</strong> {{ event.time }}</p>
+    <p><strong>Ubicación:</strong> {{ event.location }}</p>
+    <p><strong>Categoría:</strong> {{ event.category }}</p>
+    <p><strong>Cupo Máximo:</strong> {{ event.max_attendees }} personas</p>
+    <hr>
+    <h2>Asistentes</h2>
+    {% if event.attendees %}
+        <ul>
+        {% for attendee in event.attendees %}
+            <li>{{ attendee.name }} ({{ attendee.email }})</li>
+        {% endfor %}
+        </ul>
+    {% else %}
+        <p>Aún no hay asistentes registrados.</p>
+    {% endif %}
+</body>
+</html>

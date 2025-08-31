@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Crear Nuevo Evento</title>
+</head>
+<body>
+    <a href="/">Volver a la lista de eventos</a>
+    <h1>Crear Nuevo Evento</h1>
+    <form method="POST">
+        {{ form.hidden_tag() }}
+        <div>
+            {{ form.title.label }}<br>
+            {{ form.title(size=32) }}
+        </div>
+        <div>
+            {{ form.description.label }}<br>
+            {{ form.description(cols=30, rows=4) }}
+        </div>
+        <div>
+            {{ form.date.label }}<br>
+            {{ form.date(size=32) }}
+        </div>
+        <div>
+            {{ form.time.label }}<br>
+            {{ form.time(size=32) }}
+        </div>
+        <div>
+            {{ form.location.label }}<br>
+            {{ form.location(size=32) }}
+        </div>
+        <div>
+            {{ form.category.label }}<br>
+            {{ form.category }}
+        </div>
+        <div>
+            {{ form.max_attendees.label }}<br>
+            {{ form.max_attendees(size=32) }}
+        </div>
+        <div>
+            {{ form.featured }} {{ form.featured.label }}
+        </div>
+        <div>
+            {{ form.submit }}
+        </div>
+    </form>
+</body>
+</html>
