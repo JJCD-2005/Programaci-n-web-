@@ -1,25 +1,41 @@
-<!DOCTYPE html>
-<html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <title>Gestor de Eventos</title>
-</head>
-<body>
-    <h1>Próximos Eventos</h1>
-    
-    {% if events %}
-        <ul>
-        {% for event in events %}
-            <li>
-                <h2><a href="/event/{{ event.slug }}">{{ event.title }}</a></h2>
-                <p>Fecha: {{ event.date }}</p>
-                <p>Ubicación: {{ event.location }}</p>
-                <p>Categoría: {{ event.category }}</p>
-            </li>
+{% extends "base.html" %}
+
+{% block content %}
+    <h1 class="page-title">Eventos Destacados</h1>
+    <div class="featured-events-grid">
+        {% for event in featured_events %}
+            <div class="event-card featured">
+                <a href="/event/{{ event.slug }}">
+                    <h3>{{ event.title }}</h3>
+                </a>
+                <p><strong>Fecha:</strong> {{ event.date }}</p>
+                <p><strong>Ubicación:</strong> {{ event.location }}</p>
+                <p class="category">{{ event.category }}</p>
+            </div>
+        {% else %}
+            <p>No hay eventos destacados.</p>
         {% endfor %}
-        </ul>
-    {% else %}
-        <p>No hay eventos próximos.</p>
-    {% endif %}
-</body>
-</html>
+    </div>
+
+    <h2 class="section-title">Todos los Eventos</h2>
+    <div class="categories-filter">
+        <a href="/">Todos</a>
+        {% for cat in categories %}
+            <a href="/events/category/{{ cat }}">{{ cat }}</a>
+        {% endfor %}
+    </div>
+    <div class="events-list">
+        {% for event in events %}
+            <div class="event-card">
+                <a href="/event/{{ event.slug }}">
+                    <h3>{{ event.title }}</h3>
+                </a>
+                <p><strong>Fecha:</strong> {{ event.date }}</p>
+                <p><strong>Ubicación:</strong> {{ event.location }}</p>
+                <p class="category">{{ event.category }}</p>
+            </div>
+        {% else %}
+            <p>No hay eventos próximos.</p>
+        {% endfor %}
+    </div>
+{% endblock %}

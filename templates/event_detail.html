@@ -1,28 +1,46 @@
-<!DOCTYPE html>
-<html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <title>{{ event.title }}</title>
-</head>
-<body>
-    <a href="/">Volver a la lista de eventos</a>
-    <h1>{{ event.title }}</h1>
-    <p><strong>Descripción:</strong> {{ event.description }}</p>
-    <p><strong>Fecha:</strong> {{ event.date }}</p>
-    <p><strong>Hora:</strong> {{ event.time }}</p>
-    <p><strong>Ubicación:</strong> {{ event.location }}</p>
-    <p><strong>Categoría:</strong> {{ event.category }}</p>
-    <p><strong>Cupo Máximo:</strong> {{ event.max_attendees }} personas</p>
-    <hr>
-    <h2>Asistentes</h2>
-    {% if event.attendees %}
-        <ul>
-        {% for attendee in event.attendees %}
-            <li>{{ attendee.name }} ({{ attendee.email }})</li>
-        {% endfor %}
-        </ul>
-    {% else %}
-        <p>Aún no hay asistentes registrados.</p>
-    {% endif %}
-</body>
-</html>
+{% extends "base.html" %}
+
+{% block title %}{{ event.title }}{% endblock %}
+
+{% block content %}
+    <article class="event-detail">
+        <h1 class="page-title">{{ event.title }}</h1>
+        <p class="category">{{ event.category }}</p>
+        <div class="event-info">
+            <p><strong>Descripción:</strong> {{ event.description }}</p>
+            <p><strong>Fecha:</strong> {{ event.date }}</p>
+            <p><strong>Hora:</strong> {{ event.time }}</p>
+            <p><strong>Ubicación:</strong> {{ event.location }}</p>
+            <p><strong>Cupo:</strong> {{ event.max_attendees - event.attendees|length }} de {{ event.max_attendees }} disponibles</p>
+        </div>
+
+        <section class="registration-form">
+            <h2>Registrarse al Evento</h2>
+            <form method="POST" action="{{ url_for('register_for_event', slug=event.slug) }}">
+                {{ form.hidden_tag() }}
+                <div>
+                    {{ form.name.label }}<br>
+                    {{ form.name(class="form-input") }}
+                </div>
+                <div>
+                    {{ form.email.label }}<br>
+                    {{ form.email(class="form-input") }}
+                </div>
+                <button type="submit" class="btn">Registrarse</button>
+            </form>
+        </section>
+
+        <section class="attendees-list">
+            <h2>Asistentes ({{ event.attendees|length }})</h2>
+            {% if event.attendees %}
+                <ul>
+                {% for attendee in event.attendees %}
+                    <li>{{ attendee.name }}</li>
+                {% endfor %}
+                </ul>
+            {% else %}
+                <p>Aún no hay asistentes registrados.</p>
+            {% endif %}
+        </section>
+    </article>
+{% endblock %}

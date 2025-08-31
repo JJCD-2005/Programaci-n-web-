@@ -1,7 +1,7 @@
-from flask import Flask, render_template, abort, redirect, url_for
+from flask import Flask, render_template, abort, redirect, url_for, flash
 from flask_wtf import FlaskForm
 from wtforms import StringField, TextAreaField, IntegerField, SelectField, BooleanField, SubmitField
-from wtforms.validators import DataRequired, NumberRange
+from wtforms.validators import DataRequired, NumberRange, Email
 import re
 
 # Estructura de datos en memoria para los eventos
@@ -16,7 +16,7 @@ events = [
         'location': 'Auditorio Principal',
         'category': 'Tecnología',
         'max_attendees': 50,
-        'attendees': [],
+        'attendees': [{'name': 'Juan Pérez', 'email': 'juan@example.com'}],
         'featured': True
     },
     {
@@ -37,11 +37,11 @@ events = [
 # Categorías de eventos
 categories = ['Tecnología', 'Académico', 'Cultural', 'Deportivo', 'Social']
 
-# Inicializa la aplicación Flask
+# Inicializa la aplicación Flask y configura la clave secreta
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'una-clave-secreta-muy-dificil'
 
-# Clase para el formulario de eventos
+# --- Formularios ---
 class EventForm(FlaskForm):
     title = StringField('Título', validators=[DataRequired()])
     description = TextAreaField('Descripción', validators=[DataRequired()])
@@ -53,27 +53,35 @@ class EventForm(FlaskForm):
     featured = BooleanField('Destacado')
     submit = SubmitField('Crear Evento')
 
+class RegistrationForm(FlaskForm):
+    name = StringField('Nombre', validators=[DataRequired()])
+    email = StringField('Email', validators=[DataRequired(), Email()])
+    submit = SubmitField('Registrarse')
+
+# --- Rutas ---
 @app.route('/')
 def index():
-    """Muestra la página principal con la lista de eventos."""
-    return render_template('index.html', events=events)
+    featured_events = [e for e in events if e['featured']]
+    return render_template('index.html', events=events, featured_events=featured_events, categories=categories)
 
 @app.route('/event/<slug>/')
 def event_detail(slug):
-    """Muestra los detalles completos de un evento específico."""
     event = next((item for item in events if item['slug'] == slug), None)
     if event is None:
         abort(404)
-    return render_template('event_detail.html', event=event)
+    registration_form = RegistrationForm()
+    return render_template('event_detail.html', event=event, form=registration_form)
+
+@app.route('/events/category/<category>/')
+def filter_by_category(category):
+    filtered_events = [e for e in events if e['category'] == category]
+    return render_template('category.html', events=filtered_events, category=category, categories=categories)
 
 @app.route('/admin/event/', methods=['GET', 'POST'])
 def create_event():
-    """Maneja la creación de nuevos eventos a través de un formulario."""
     form = EventForm()
     if form.validate_on_submit():
         new_id = len(events) + 1
-        
-        # Genera un slug a partir del título
         slug_text = form.title.data.lower().strip()
         new_slug = re.sub(r'[^a-z0-9\s-]', '', slug_text).replace(' ', '-')
         
@@ -91,8 +99,26 @@ def create_event():
             'featured': form.featured.data
         }
         events.append(new_event)
+        flash('¡Evento creado exitosamente!', 'success')
         return redirect(url_for('event_detail', slug=new_slug))
     return render_template('create_event.html', form=form)
+
+@app.route('/event/<slug>/register/', methods=['POST'])
+def register_for_event(slug):
+    event = next((item for item in events if item['slug'] == slug), None)
+    if event is None:
+        abort(404)
+    
+    form = RegistrationForm()
+    if form.validate_on_submit():
+        if len(event['attendees']) < event['max_attendees']:
+            attendee_info = {'name': form.name.data, 'email': form.email.data}
+            event['attendees'].append(attendee_info)
+            flash('¡Te has registrado exitosamente!', 'success')
+        else:
+            flash('¡Lo sentimos, el cupo para este evento está lleno!', 'danger')
+            
+    return redirect(url_for('event_detail', slug=slug))
 
 if __name__ == '__main__':
     app.run(debug=True)

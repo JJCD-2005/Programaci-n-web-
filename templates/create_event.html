@@ -1,48 +1,42 @@
-<!DOCTYPE html>
-<html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <title>Crear Nuevo Evento</title>
-</head>
-<body>
-    <a href="/">Volver a la lista de eventos</a>
-    <h1>Crear Nuevo Evento</h1>
-    <form method="POST">
+{% extends "base.html" %}
+
+{% block title %}Crear Evento{% endblock %}
+
+{% block content %}
+    <h1 class="page-title">Crear Nuevo Evento</h1>
+    <form method="POST" class="form">
         {{ form.hidden_tag() }}
-        <div>
-            {{ form.title.label }}<br>
-            {{ form.title(size=32) }}
+        <div class="form-group">
+            {{ form.title.label }}
+            {{ form.title(class="form-input") }}
         </div>
-        <div>
-            {{ form.description.label }}<br>
-            {{ form.description(cols=30, rows=4) }}
+        <div class="form-group">
+            {{ form.description.label }}
+            {{ form.description(class="form-input textarea") }}
         </div>
-        <div>
-            {{ form.date.label }}<br>
-            {{ form.date(size=32) }}
+        <div class="form-group">
+            {{ form.date.label }}
+            {{ form.date(class="form-input", placeholder="YYYY-MM-DD") }}
         </div>
-        <div>
-            {{ form.time.label }}<br>
-            {{ form.time(size=32) }}
+        <div class="form-group">
+            {{ form.time.label }}
+            {{ form.time(class="form-input", placeholder="HH:MM") }}
         </div>
-        <div>
-            {{ form.location.label }}<br>
-            {{ form.location(size=32) }}
+        <div class="form-group">
+            {{ form.location.label }}
+            {{ form.location(class="form-input") }}
         </div>
-        <div>
-            {{ form.category.label }}<br>
-            {{ form.category }}
+        <div class="form-group">
+            {{ form.category.label }}
+            {{ form.category(class="form-input") }}
         </div>
-        <div>
-            {{ form.max_attendees.label }}<br>
-            {{ form.max_attendees(size=32) }}
+        <div class="form-group">
+            {{ form.max_attendees.label }}
+            {{ form.max_attendees(class="form-input") }}
         </div>
-        <div>
+        <div class="form-group checkbox-group">
             {{ form.featured }} {{ form.featured.label }}
         </div>
-        <div>
-            {{ form.submit }}
-        </div>
+        <button type="submit" class="btn">Crear Evento</button>
     </form>
-</body>
-</html>
+{% endblock %}

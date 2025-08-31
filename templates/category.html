@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+
+{% block title %}Eventos de {{ category }}{% endblock %}
+
+{% block content %}
+    <h1 class="page-title">Eventos de {{ category }}</h1>
+    <div class="events-list">
+        {% for event in events %}
+            <div class="event-card">
+                <a href="/event/{{ event.slug }}">
+                    <h3>{{ event.title }}</h3>
+                </a>
+                <p><strong>Fecha:</strong> {{ event.date }}</p>
+                <p><strong>Ubicación:</strong> {{ event.location }}</p>
+                <p class="category">{{ event.category }}</p>
+            </div>
+        {% else %}
+            <p>No hay eventos en esta categoría.</p>
+        {% endfor %}
+    </div>
+{% endblock %}
