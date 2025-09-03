@@ -16,7 +16,7 @@
 
         <section class="registration-form">
             <h2>Registrarse al Evento</h2>
-            <form method="POST" action="{{ url_for('register_for_event', slug=event.slug) }}">
+            <form method="POST" action="{{ url_for('event_detail', slug=event.slug) }}">
                 {{ form.hidden_tag() }}
                 <div>
                     {{ form.name.label }}<br>

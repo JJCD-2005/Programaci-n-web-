@@ -64,12 +64,22 @@ def index():
     featured_events = [e for e in events if e['featured']]
     return render_template('index.html', events=events, featured_events=featured_events, categories=categories)
 
-@app.route('/event/<slug>/')
+@app.route('/event/<slug>/', methods=['GET', 'POST'])
 def event_detail(slug):
     event = next((item for item in events if item['slug'] == slug), None)
     if event is None:
         abort(404)
+    
     registration_form = RegistrationForm()
+    if registration_form.validate_on_submit():
+        if len(event['attendees']) < event['max_attendees']:
+            attendee_info = {'name': registration_form.name.data, 'email': registration_form.email.data}
+            event['attendees'].append(attendee_info)
+            flash('¡Te has registrado exitosamente!', 'success')
+        else:
+            flash('¡Lo sentimos, el cupo para este evento está lleno!', 'danger')
+        return redirect(url_for('event_detail', slug=slug))
+    
     return render_template('event_detail.html', event=event, form=registration_form)
 
 @app.route('/events/category/<category>/')
@@ -102,23 +112,6 @@ def create_event():
         flash('¡Evento creado exitosamente!', 'success')
         return redirect(url_for('event_detail', slug=new_slug))
     return render_template('create_event.html', form=form)
-
-@app.route('/event/<slug>/register/', methods=['POST'])
-def register_for_event(slug):
-    event = next((item for item in events if item['slug'] == slug), None)
-    if event is None:
-        abort(404)
-    
-    form = RegistrationForm()
-    if form.validate_on_submit():
-        if len(event['attendees']) < event['max_attendees']:
-            attendee_info = {'name': form.name.data, 'email': form.email.data}
-            event['attendees'].append(attendee_info)
-            flash('¡Te has registrado exitosamente!', 'success')
-        else:
-            flash('¡Lo sentimos, el cupo para este evento está lleno!', 'danger')
-            
-    return redirect(url_for('event_detail', slug=slug))
 
 if __name__ == '__main__':
     app.run(debug=True)
